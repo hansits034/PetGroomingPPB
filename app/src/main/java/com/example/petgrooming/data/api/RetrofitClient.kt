@@ -12,4 +12,14 @@ object RetrofitClient {
             .build()
             .create(ApiService::class.java)
     }
+
+    // Service for fetching random pet images. The endpoints use absolute URLs,
+    // so this baseUrl is only a (required) placeholder.
+    val animalApiService: AnimalApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://dog.ceo/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AnimalApiService::class.java)
+    }
 }

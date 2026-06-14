@@ -3,6 +3,7 @@ package com.example.petgrooming.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.petgrooming.data.api.RetrofitClient
 import com.example.petgrooming.data.local.PetDatabase
 import com.example.petgrooming.data.local.entity.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -243,6 +244,8 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
         val currentState = _uiState.value
         if (currentState is PetUiState.Success) {
             viewModelScope.launch {
+                // Fetch a random image from the API based on the pet type (dog/cat/...)
+                val imageUrl = fetchPetImage(type)
                 val pet = UserPetEntity(
                     memberId = currentState.member.memberId,
                     name = name,
@@ -250,7 +253,8 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
                     age = age,
                     type = type,
                     gender = gender,
-                    description = description
+                    description = description,
+                    imageUrl = imageUrl
                 )
                 userPetDao.insertPet(pet)
             }
@@ -259,7 +263,30 @@ class PetViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updatePet(pet: UserPetEntity) {
         viewModelScope.launch {
-            userPetDao.updatePet(pet)
+            // If the pet has no image yet (new pet from before this feature, or its
+            // type was just changed), fetch a fresh one that matches the type.
+            val petToSave = if (pet.imageUrl == null) pet.copy(imageUrl = fetchPetImage(pet.type)) else pet
+            userPetDao.updatePet(petToSave)
+        }
+    }
+
+    /**
+     * Calls a public REST API to get a random image URL for the given pet type.
+     * Returns null on any network/parse error so adding a pet never fails because
+     * of the image lookup.
+     */
+    private suspend fun fetchPetImage(type: String): String? {
+        return try {
+            when (type.trim().lowercase()) {
+                "dog" -> RetrofitClient.animalApiService.getRandomDog().message
+                "cat" -> RetrofitClient.animalApiService.getRandomCat().firstOrNull()?.url
+                else -> {
+                    val tag = type.trim().lowercase().ifBlank { "animal" }
+                    "https://loremflickr.com/640/480/$tag"
+                }
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 
