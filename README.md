@@ -1,6 +1,6 @@
 # Pet Bliss - Pet Grooming Management App
 
-**Pet Bliss** adalah aplikasi manajemen layanan perawatan hewan (pet grooming) berbasis Android yang dirancang untuk memudahkan pemilik hewan peliharaan dalam mengelola kebutuhan perawatan anabul mereka secara praktis dan terorganisir.
+**Pet Bliss** adalah platform manajemen layanan perawatan hewan (pet grooming) berbasis Android yang dirancang untuk memudahkan pemilik hewan peliharaan dalam mengelola profil anabul mereka, melakukan reservasi berbagai layanan jasa secara mandiri, hingga memantau riwayat janji temu. Aplikasi ini juga dilengkapi dengan sistem loyalitas digital di mana pengguna dapat mengumpulkan poin dari setiap transaksi untuk ditukarkan dengan berbagai voucher hadiah menarik, memberikan pengalaman perawatan hewan yang lebih terorganisir dan menguntungkan.
 
 ## Fitur Utama
 
